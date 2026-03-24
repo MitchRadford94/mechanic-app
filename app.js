@@ -8,11 +8,15 @@ let jobs = [];
 let editingId = null;
 let currentFilter = "all";
 
+// =======================
 // INIT
+// =======================
 loadJobs();
 searchInput.addEventListener("input", displayJobs);
 
-// ADD / EDIT
+// =======================
+// ADD / EDIT JOB
+// =======================
 form.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -51,7 +55,9 @@ form.addEventListener("submit", function (e) {
     }
 });
 
-// LOAD + DASHBOARD
+// =======================
+// LOAD JOBS + DASHBOARD
+// =======================
 function loadJobs() {
     fetch(`${API_URL}/jobs`)
         .then(res => res.json())
@@ -71,7 +77,9 @@ function loadJobs() {
         });
 }
 
-// DISPLAY
+// =======================
+// DISPLAY JOBS
+// =======================
 function displayJobs() {
     jobList.innerHTML = "";
 
@@ -123,13 +131,17 @@ function displayJobs() {
         });
 }
 
+// =======================
 // FILTER
+// =======================
 function setFilter(filter) {
     currentFilter = filter;
     displayJobs();
 }
 
-// EDIT
+// =======================
+// EDIT JOB
+// =======================
 function editJob(id) {
     const job = jobs.find(j => j.id === id);
     if (!job) return;
@@ -144,7 +156,9 @@ function editJob(id) {
     editingId = id;
 }
 
-// STATUS
+// =======================
+// UPDATE STATUS
+// =======================
 function updateStatus(id, statusValue) {
     fetch(`${API_URL}/jobs/${id}`, {
         method: "PUT",
@@ -155,7 +169,9 @@ function updateStatus(id, statusValue) {
     .then(loadJobs);
 }
 
-// DELETE
+// =======================
+// DELETE JOB
+// =======================
 function deleteJob(id) {
     if (!confirm("Delete this job?")) return;
 
@@ -166,7 +182,9 @@ function deleteJob(id) {
     .then(loadJobs);
 }
 
-// PRINT
+// =======================
+// PRINT JOB
+// =======================
 function printJob(id) {
     const job = jobs.find(j => j.id === id);
     if (!job) return;
@@ -206,7 +224,9 @@ function printJob(id) {
     win.print();
 }
 
-// LOGO
+// =======================
+// LOGO UPLOAD
+// =======================
 const logoUpload = document.getElementById("logoUpload");
 const logoPreview = document.getElementById("logoPreview");
 
@@ -229,12 +249,30 @@ logoUpload.addEventListener("change", function () {
     if (file) reader.readAsDataURL(file);
 });
 
+// =======================
 // DARK MODE
+// =======================
 function toggleDarkMode() {
     document.body.classList.toggle("dark");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("darkMode", isDark);
+
+    updateDarkIcon();
 }
 
+function updateDarkIcon() {
+    const btn = document.querySelector(".dark-toggle");
+    if (!btn) return;
+
+    const isDark = document.body.classList.contains("dark");
+    btn.textContent = isDark ? "☀️" : "🌙";
+}
+
+// Load saved mode
 if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark");
 }
+
+// Set icon on load
+updateDarkIcon();
