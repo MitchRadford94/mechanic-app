@@ -2,24 +2,35 @@ const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const searchInput = document.getElementById("search");
 
+// 🔥 LIVE API URL
+const API_URL = "https://mechanic-app-v6wp.onrender.com";
+
 let jobs = [];
 let editingId = null;
 
-// Load jobs
+// =======================
+// LOAD JOBS
+// =======================
 loadJobs();
 
-// Search
+// =======================
+// SEARCH
+// =======================
 searchInput.addEventListener("input", displayJobs);
 
-// Submit (Add / Edit)
+// =======================
+// ADD / EDIT JOB
+// =======================
 form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     if (editingId) {
         // EDIT
-        fetch(`http://localhost:3000/jobs/${editingId}`, {
+        fetch(`${API_URL}/jobs/${editingId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
                 customer: customer.value,
                 vehicle: vehicle.value,
@@ -29,38 +40,47 @@ form.addEventListener("submit", function (e) {
                 status: status.value
             })
         })
+        .then(res => res.json())
         .then(() => {
             editingId = null;
             form.reset();
             loadJobs();
-        });
+        })
+        .catch(err => console.error("EDIT ERROR:", err));
 
     } else {
         // ADD
         const formData = new FormData(form);
 
-        fetch("http://localhost:3000/jobs", {
+        fetch(`${API_URL}/jobs`, {
             method: "POST",
             body: formData
         })
+        .then(res => res.json())
         .then(() => {
             form.reset();
             loadJobs();
-        });
+        })
+        .catch(err => console.error("ADD ERROR:", err));
     }
 });
 
-// Load jobs
+// =======================
+// LOAD JOBS
+// =======================
 function loadJobs() {
-    fetch("http://localhost:3000/jobs")
+    fetch(`${API_URL}/jobs`)
         .then(res => res.json())
         .then(data => {
             jobs = data;
             displayJobs();
-        });
+        })
+        .catch(err => console.error("LOAD ERROR:", err));
 }
 
-// Display jobs
+// =======================
+// DISPLAY JOBS
+// =======================
 function displayJobs() {
     jobList.innerHTML = "";
 
@@ -87,7 +107,7 @@ function displayJobs() {
                     Status: ${job.status}
                 </span><br>
 
-                ${job.photo ? `<img src="http://localhost:3000/uploads/${job.photo}" width="200"><br>` : ""}
+                ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}" width="200"><br>` : ""}
 
                 <button onclick="updateStatus('${job.id}', 'in progress')">Start</button>
                 <button onclick="updateStatus('${job.id}', 'done')">Complete</button>
@@ -99,7 +119,9 @@ function displayJobs() {
         });
 }
 
-// Edit
+// =======================
+// EDIT JOB
+// =======================
 function editJob(id) {
     const job = jobs.find(j => j.id === id);
 
@@ -113,20 +135,32 @@ function editJob(id) {
     editingId = id;
 }
 
-// Update status
+// =======================
+// UPDATE STATUS
+// =======================
 function updateStatus(id, status) {
-    fetch(`http://localhost:3000/jobs/${id}`, {
+    fetch(`${API_URL}/jobs/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({ status })
-    }).then(loadJobs);
+    })
+    .then(res => res.json())
+    .then(loadJobs)
+    .catch(err => console.error("STATUS ERROR:", err));
 }
 
-// Delete
+// =======================
+// DELETE JOB
+// =======================
 function deleteJob(id) {
     if (!confirm("Delete this job?")) return;
 
-    fetch(`http://localhost:3000/jobs/${id}`, {
+    fetch(`${API_URL}/jobs/${id}`, {
         method: "DELETE"
-    }).then(loadJobs);
+    })
+    .then(res => res.json())
+    .then(loadJobs)
+    .catch(err => console.error("DELETE ERROR:", err));
 }
