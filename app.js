@@ -2,20 +2,17 @@ const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const searchInput = document.getElementById("search");
 
-// 🔥 LIVE API URL
+// 🔥 LIVE API
 const API_URL = "https://mechanic-app-v6wp.onrender.com";
 
 let jobs = [];
 let editingId = null;
+let currentFilter = "all";
 
 // =======================
-// LOAD JOBS
+// INIT
 // =======================
 loadJobs();
-
-// =======================
-// SEARCH
-// =======================
 searchInput.addEventListener("input", displayJobs);
 
 // =======================
@@ -66,20 +63,31 @@ form.addEventListener("submit", function (e) {
 });
 
 // =======================
-// LOAD JOBS
+// LOAD JOBS + COUNTS
 // =======================
 function loadJobs() {
     fetch(`${API_URL}/jobs`)
         .then(res => res.json())
         .then(data => {
             jobs = Array.isArray(data) ? data : [];
+
+            // Dashboard counts
+            document.getElementById("count-new").innerText =
+                jobs.filter(j => j.status === "new").length;
+
+            document.getElementById("count-progress").innerText =
+                jobs.filter(j => j.status === "in progress").length;
+
+            document.getElementById("count-done").innerText =
+                jobs.filter(j => j.status === "done").length;
+
             displayJobs();
         })
         .catch(err => console.error("LOAD ERROR:", err));
 }
 
 // =======================
-// DISPLAY JOBS (SAFE)
+// DISPLAY JOBS (FILTER + SEARCH SAFE)
 // =======================
 function displayJobs() {
     jobList.innerHTML = "";
@@ -88,11 +96,15 @@ function displayJobs() {
 
     jobs
         .filter(job => {
-            return (
+            const matchesSearch =
                 (job.customer || "").toLowerCase().includes(search) ||
                 (job.vehicle || "").toLowerCase().includes(search) ||
-                (job.issue || "").toLowerCase().includes(search)
-            );
+                (job.issue || "").toLowerCase().includes(search);
+
+            const matchesFilter =
+                currentFilter === "all" || job.status === currentFilter;
+
+            return matchesSearch && matchesFilter;
         })
         .forEach(job => {
             const div = document.createElement("div");
@@ -119,6 +131,14 @@ function displayJobs() {
 
             jobList.appendChild(div);
         });
+}
+
+// =======================
+// FILTER BUTTON
+// =======================
+function setFilter(filter) {
+    currentFilter = filter;
+    displayJobs();
 }
 
 // =======================

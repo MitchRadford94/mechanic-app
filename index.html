@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mechanic Job App</title>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 
     <!-- Prevent favicon error -->
     <link rel="icon" href="data:,">
 </head>
+
 <body>
 
-    <h1>Mechanic Job Capture</h1>
+<div class="container">
 
-    <!-- JOB FORM -->
+    <h1>🔧 Mechanic Job Capture</h1>
+
+    <!-- FORM -->
     <form id="jobForm" enctype="multipart/form-data">
+
         <input type="text" id="customer" placeholder="Customer Name" required>
+
         <input type="text" id="vehicle" placeholder="Vehicle Details" required>
 
         <textarea id="issue" placeholder="Issue Description"></textarea>
+
         <textarea id="work" placeholder="Work Required"></textarea>
 
         <input type="number" id="quote" placeholder="Quote (£)">
@@ -27,22 +37,34 @@
             <option value="done">Done</option>
         </select>
 
-        <!-- Photo upload -->
         <input type="file" id="photo">
 
-        <button type="submit">Add Job</button>
+        <button type="submit">💾 Save Job</button>
+
     </form>
 
-    <hr>
+    <!-- SEARCH -->
+    <input type="text" id="search" placeholder="🔍 Search jobs...">
+<h2>Dashboard</h2>
 
-    <!-- SEARCH (we’ll wire this next) -->
-    <input type="text" id="search" placeholder="Search jobs...">
+<div class="stats">
+    <div class="stat">New: <span id="count-new">0</span></div>
+    <div class="stat">In Progress: <span id="count-progress">0</span></div>
+    <div class="stat">Done: <span id="count-done">0</span></div>
+</div>
 
-    <h2>Jobs</h2>
-    <div id="jobList"></div>
+<div class="filters">
+    <button onclick="setFilter('all')">All</button>
+    <button onclick="setFilter('new')">New</button>
+    <button onclick="setFilter('in progress')">In Progress</button>
+    <button onclick="setFilter('done')">Done</button>
+</div>
 
-    <!-- JavaScript -->
-    <script src="app.js"></script>
+<h2>Jobs</h2>
+<div id="jobList"></div>
+
+<!-- SCRIPT -->
+<script src="app.js"></script>
 
 </body>
 </html>

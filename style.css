@@ -1,63 +1,131 @@
 body {
     font-family: Arial, sans-serif;
-    background: #f4f6f8;
+    background: #f1f3f6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
     padding: 20px;
 }
 
 h1 {
     text-align: center;
-}
-
-form {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
     margin-bottom: 20px;
 }
 
-input, textarea, select, button {
+/* FORM */
+form {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+input, textarea, select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid #ccc;
 }
 
 button {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
     cursor: pointer;
+    font-weight: bold;
+}
+
+/* BUTTON COLORS */
+button {
     background: #007bff;
     color: white;
-    border: none;
 }
 
 button:hover {
     background: #0056b3;
 }
 
+/* JOB CARD */
 .job {
     background: white;
     padding: 15px;
     margin-top: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .job img {
+    width: 100%;
     margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* STATUS BADGES */
+.status-new {
+    background: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
     border-radius: 6px;
 }
 
-.status-new {
-    color: red;
-    font-weight: bold;
-}
-
 .status-in-progress {
-    color: orange;
-    font-weight: bold;
+    background: orange;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
 }
 
 .status-done {
-    color: green;
+    background: green;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+/* BUTTON GROUP */
+.job button {
+    margin-right: 5px;
+    margin-top: 8px;
+}
+
+.job button:nth-child(1) { background: orange; }
+.job button:nth-child(2) { background: green; }
+.job button:nth-child(3) { background: red; }
+.job button:nth-child(4) { background: #6c757d; }
+
+/* SEARCH */
+#search {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+}.stats {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.stat {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
     font-weight: bold;
+}
+
+.filters {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.filters button {
+    flex: 1;
 }
