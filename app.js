@@ -263,25 +263,20 @@ function toggleDarkMode() {
 }
 
 function updateDarkIcon() {
-    const btn = document.querySelector(".dark-toggle");
+    const btn = document.getElementById("darkToggleBtn");
 
-    if (!btn) {
-        console.log("Dark mode button not found");
-        return;
-    }
+    if (!btn) return;
 
     const isDark = document.body.classList.contains("dark");
     btn.textContent = isDark ? "☀️" : "🌙";
 }
 
-// Run AFTER page loads
-window.addEventListener("DOMContentLoaded", () => {
+// Run when page fully loads
+window.onload = function () {
 
-    // Load saved mode
     if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark");
     }
 
-    // Set correct icon
     updateDarkIcon();
-});
+};
