@@ -22,7 +22,6 @@ form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     if (editingId) {
-        // EDIT
         fetch(`${API_URL}/jobs/${editingId}`, {
             method: "PUT",
             headers: {
@@ -42,11 +41,9 @@ form.addEventListener("submit", function (e) {
             editingId = null;
             form.reset();
             loadJobs();
-        })
-        .catch(err => console.error("EDIT ERROR:", err));
+        });
 
     } else {
-        // ADD
         const formData = new FormData(form);
 
         fetch(`${API_URL}/jobs`, {
@@ -57,13 +54,12 @@ form.addEventListener("submit", function (e) {
         .then(() => {
             form.reset();
             loadJobs();
-        })
-        .catch(err => console.error("ADD ERROR:", err));
+        });
     }
 });
 
 // =======================
-// LOAD JOBS + COUNTS
+// LOAD JOBS + DASHBOARD
 // =======================
 function loadJobs() {
     fetch(`${API_URL}/jobs`)
@@ -71,7 +67,6 @@ function loadJobs() {
         .then(data => {
             jobs = Array.isArray(data) ? data : [];
 
-            // Dashboard counts
             document.getElementById("count-new").innerText =
                 jobs.filter(j => j.status === "new").length;
 
@@ -82,12 +77,11 @@ function loadJobs() {
                 jobs.filter(j => j.status === "done").length;
 
             displayJobs();
-        })
-        .catch(err => console.error("LOAD ERROR:", err));
+        });
 }
 
 // =======================
-// DISPLAY JOBS (FILTER + SEARCH SAFE)
+// DISPLAY JOBS
 // =======================
 function displayJobs() {
     jobList.innerHTML = "";
@@ -111,22 +105,29 @@ function displayJobs() {
             div.className = "job";
 
             div.innerHTML = `
-                <strong>${job.customer || ""}</strong><br>
-                ${job.vehicle || ""}<br>
-                ${job.issue || ""}<br>
-                ${job.work || ""}<br>
-                £${job.quote || ""}<br>
+                <div class="job-header">
+                    <h3>${job.customer || ""}</h3>
+                    <span class="status-${(job.status || "new").replace(" ", "-")}">
+                        ${job.status || "new"}
+                    </span>
+                </div>
 
-                <span class="status-${(job.status || "new").replace(" ", "-")}">
-                    Status: ${job.status || "new"}
-                </span><br>
+                <div class="job-body">
+                    <p><strong>Vehicle:</strong> ${job.vehicle || ""}</p>
+                    <p><strong>Issue:</strong> ${job.issue || ""}</p>
+                    <p><strong>Work:</strong> ${job.work || ""}</p>
+                    <p><strong>Quote:</strong> £${job.quote || ""}</p>
+                </div>
 
-                ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}" width="200"><br>` : ""}
+                ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}">` : ""}
 
-                <button onclick="updateStatus('${job.id}', 'in progress')">Start</button>
-                <button onclick="updateStatus('${job.id}', 'done')">Complete</button>
-                <button onclick="deleteJob('${job.id}')">Delete</button>
-                <button onclick="editJob('${job.id}')">Edit</button>
+                <div class="job-actions">
+                    <button onclick="updateStatus('${job.id}', 'in progress')">Start</button>
+                    <button onclick="updateStatus('${job.id}', 'done')">Done</button>
+                    <button onclick="deleteJob('${job.id}')">Delete</button>
+                    <button onclick="editJob('${job.id}')">Edit</button>
+                    <button onclick="printJob('${job.id}')">Print</button>
+                </div>
             `;
 
             jobList.appendChild(div);
@@ -134,7 +135,7 @@ function displayJobs() {
 }
 
 // =======================
-// FILTER BUTTON
+// FILTER
 // =======================
 function setFilter(filter) {
     currentFilter = filter;
@@ -170,8 +171,7 @@ function updateStatus(id, statusValue) {
         body: JSON.stringify({ status: statusValue })
     })
     .then(res => res.json())
-    .then(loadJobs)
-    .catch(err => console.error("STATUS ERROR:", err));
+    .then(loadJobs);
 }
 
 // =======================
@@ -184,6 +184,45 @@ function deleteJob(id) {
         method: "DELETE"
     })
     .then(res => res.json())
-    .then(loadJobs)
-    .catch(err => console.error("DELETE ERROR:", err));
+    .then(loadJobs);
+}
+
+// =======================
+// PRINT JOB
+// =======================
+function printJob(id) {
+    const job = jobs.find(j => j.id === id);
+    if (!job) return;
+
+    const printWindow = window.open("", "", "width=800,height=600");
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Job Sheet</title>
+            <style>
+                body { font-family: Arial; padding: 20px; }
+                h1 { text-align: center; }
+                .section { margin-bottom: 15px; }
+            </style>
+        </head>
+        <body>
+
+            <h1>Mechanic Job Sheet</h1>
+
+            <div class="section"><strong>Customer:</strong> ${job.customer}</div>
+            <div class="section"><strong>Vehicle:</strong> ${job.vehicle}</div>
+            <div class="section"><strong>Issue:</strong> ${job.issue}</div>
+            <div class="section"><strong>Work Required:</strong> ${job.work}</div>
+            <div class="section"><strong>Quote:</strong> £${job.quote}</div>
+            <div class="section"><strong>Status:</strong> ${job.status}</div>
+
+            ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}" width="300">` : ""}
+
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.print();
 }

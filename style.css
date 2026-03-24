@@ -128,4 +128,54 @@ button:hover {
 
 .filters button {
     flex: 1;
+}@media (max-width: 600px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    input, textarea, select, button {
+        font-size: 16px;
+    }
+
+    .stats {
+        flex-direction: column;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .job {
+        font-size: 14px;
+    }
+
+    .job button {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.job-body p {
+    margin: 5px 0;
+}
+
+.job-actions {
+    margin-top: 10px;
+}
+
+.job-actions button {
+    margin-right: 5px;
 }
