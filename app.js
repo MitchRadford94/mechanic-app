@@ -2,31 +2,24 @@ const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const searchInput = document.getElementById("search");
 
-// 🔥 LIVE API
 const API_URL = "https://mechanic-app-v6wp.onrender.com";
 
 let jobs = [];
 let editingId = null;
 let currentFilter = "all";
 
-// =======================
 // INIT
-// =======================
 loadJobs();
 searchInput.addEventListener("input", displayJobs);
 
-// =======================
-// ADD / EDIT JOB
-// =======================
+// ADD / EDIT
 form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     if (editingId) {
         fetch(`${API_URL}/jobs/${editingId}`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 customer: customer.value,
                 vehicle: vehicle.value,
@@ -58,9 +51,7 @@ form.addEventListener("submit", function (e) {
     }
 });
 
-// =======================
-// LOAD JOBS + DASHBOARD
-// =======================
+// LOAD + DASHBOARD
 function loadJobs() {
     fetch(`${API_URL}/jobs`)
         .then(res => res.json())
@@ -80,9 +71,7 @@ function loadJobs() {
         });
 }
 
-// =======================
-// DISPLAY JOBS
-// =======================
+// DISPLAY
 function displayJobs() {
     jobList.innerHTML = "";
 
@@ -134,17 +123,13 @@ function displayJobs() {
         });
 }
 
-// =======================
 // FILTER
-// =======================
 function setFilter(filter) {
     currentFilter = filter;
     displayJobs();
 }
 
-// =======================
-// EDIT JOB
-// =======================
+// EDIT
 function editJob(id) {
     const job = jobs.find(j => j.id === id);
     if (!job) return;
@@ -159,24 +144,18 @@ function editJob(id) {
     editingId = id;
 }
 
-// =======================
-// UPDATE STATUS
-// =======================
+// STATUS
 function updateStatus(id, statusValue) {
     fetch(`${API_URL}/jobs/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: statusValue })
     })
     .then(res => res.json())
     .then(loadJobs);
 }
 
-// =======================
-// DELETE JOB
-// =======================
+// DELETE
 function deleteJob(id) {
     if (!confirm("Delete this job?")) return;
 
@@ -187,42 +166,75 @@ function deleteJob(id) {
     .then(loadJobs);
 }
 
-// =======================
-// PRINT JOB
-// =======================
+// PRINT
 function printJob(id) {
     const job = jobs.find(j => j.id === id);
     if (!job) return;
 
-    const printWindow = window.open("", "", "width=800,height=600");
+    const logo = localStorage.getItem("garageLogo");
 
-    printWindow.document.write(`
+    const win = window.open("", "", "width=800,height=600");
+
+    win.document.write(`
         <html>
         <head>
             <title>Job Sheet</title>
             <style>
                 body { font-family: Arial; padding: 20px; }
                 h1 { text-align: center; }
-                .section { margin-bottom: 15px; }
+                .section { margin-bottom: 10px; }
             </style>
         </head>
         <body>
+
+            ${logo ? `<img src="${logo}" width="150">` : ""}
 
             <h1>Mechanic Job Sheet</h1>
 
             <div class="section"><strong>Customer:</strong> ${job.customer}</div>
             <div class="section"><strong>Vehicle:</strong> ${job.vehicle}</div>
             <div class="section"><strong>Issue:</strong> ${job.issue}</div>
-            <div class="section"><strong>Work Required:</strong> ${job.work}</div>
+            <div class="section"><strong>Work:</strong> ${job.work}</div>
             <div class="section"><strong>Quote:</strong> £${job.quote}</div>
             <div class="section"><strong>Status:</strong> ${job.status}</div>
-
-            ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}" width="300">` : ""}
 
         </body>
         </html>
     `);
 
-    printWindow.document.close();
-    printWindow.print();
+    win.document.close();
+    win.print();
+}
+
+// LOGO
+const logoUpload = document.getElementById("logoUpload");
+const logoPreview = document.getElementById("logoPreview");
+
+const savedLogo = localStorage.getItem("garageLogo");
+if (savedLogo) {
+    logoPreview.src = savedLogo;
+    logoPreview.style.display = "block";
+}
+
+logoUpload.addEventListener("change", function () {
+    const file = this.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function () {
+        localStorage.setItem("garageLogo", reader.result);
+        logoPreview.src = reader.result;
+        logoPreview.style.display = "block";
+    };
+
+    if (file) reader.readAsDataURL(file);
+});
+
+// DARK MODE
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+
+if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
 }

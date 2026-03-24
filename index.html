@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mechanic Job App</title>
-
-    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Prevent favicon error -->
     <link rel="icon" href="data:,">
 </head>
 
@@ -18,53 +14,54 @@
 
     <h1>🔧 Mechanic Job Capture</h1>
 
+    <!-- DARK MODE -->
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+
+    <!-- LOGO UPLOAD -->
+    <h3>Garage Branding</h3>
+    <input type="file" id="logoUpload">
+    <img id="logoPreview" style="max-width:150px; margin-top:10px; display:none;">
+
     <!-- FORM -->
     <form id="jobForm" enctype="multipart/form-data">
-
         <input type="text" id="customer" placeholder="Customer Name" required>
-
         <input type="text" id="vehicle" placeholder="Vehicle Details" required>
-
         <textarea id="issue" placeholder="Issue Description"></textarea>
-
         <textarea id="work" placeholder="Work Required"></textarea>
-
         <input type="number" id="quote" placeholder="Quote (£)">
-
         <select id="status">
             <option value="new">New</option>
             <option value="in progress">In Progress</option>
             <option value="done">Done</option>
         </select>
-
         <input type="file" id="photo">
-
         <button type="submit">💾 Save Job</button>
-
     </form>
 
     <!-- SEARCH -->
     <input type="text" id="search" placeholder="🔍 Search jobs...">
-<h2>Dashboard</h2>
 
-<div class="stats">
-    <div class="stat">New: <span id="count-new">0</span></div>
-    <div class="stat">In Progress: <span id="count-progress">0</span></div>
-    <div class="stat">Done: <span id="count-done">0</span></div>
+    <!-- DASHBOARD -->
+    <h2>Dashboard</h2>
+    <div class="stats">
+        <div class="stat">New: <span id="count-new">0</span></div>
+        <div class="stat">In Progress: <span id="count-progress">0</span></div>
+        <div class="stat">Done: <span id="count-done">0</span></div>
+    </div>
+
+    <div class="filters">
+        <button onclick="setFilter('all')">All</button>
+        <button onclick="setFilter('new')">New</button>
+        <button onclick="setFilter('in progress')">In Progress</button>
+        <button onclick="setFilter('done')">Done</button>
+    </div>
+
+    <!-- JOB LIST -->
+    <h2>Jobs</h2>
+    <div id="jobList"></div>
+
 </div>
 
-<div class="filters">
-    <button onclick="setFilter('all')">All</button>
-    <button onclick="setFilter('new')">New</button>
-    <button onclick="setFilter('in progress')">In Progress</button>
-    <button onclick="setFilter('done')">Done</button>
-</div>
-
-<h2>Jobs</h2>
-<div id="jobList"></div>
-
-<!-- SCRIPT -->
 <script src="app.js"></script>
-
 </body>
 </html>
