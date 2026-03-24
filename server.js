@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // =======================
-// FILE PATHS (FIXED)
+// FILE PATHS
 // =======================
 const DATA_FILE = path.join(__dirname, "jobs.json");
 const UPLOADS_DIR = path.join(__dirname, "uploads");
@@ -25,8 +25,11 @@ if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR);
 }
 
-// Serve uploaded images
+// Serve uploads
 app.use("/uploads", express.static(UPLOADS_DIR));
+
+// Serve frontend (IMPORTANT)
+app.use(express.static(__dirname));
 
 // =======================
 // MULTER SETUP
@@ -58,26 +61,20 @@ function saveJobs(jobs) {
 }
 
 // =======================
-// ROUTES
+// ROUTES (API)
 // =======================
-
-// Test route
-app.get("/", (req, res) => {
-    res.send("Server is running");
-});
 
 // Get all jobs
 app.get("/jobs", (req, res) => {
     res.json(getJobs());
 });
 
-// Add job (WITH ID)
+// Add job
 app.post("/jobs", upload.single("photo"), (req, res) => {
     const jobs = getJobs();
 
     const newJob = {
         id: Date.now().toString(),
-
         customer: req.body.customer,
         vehicle: req.body.vehicle,
         issue: req.body.issue,
@@ -95,7 +92,7 @@ app.post("/jobs", upload.single("photo"), (req, res) => {
     res.json({ message: "Job saved", job: newJob });
 });
 
-// Update job status
+// Update job (FULL EDIT)
 app.put("/jobs/:id", (req, res) => {
     const jobs = getJobs();
     const id = req.params.id;
@@ -106,10 +103,16 @@ app.put("/jobs/:id", (req, res) => {
         return res.status(404).json({ message: "Job not found" });
     }
 
+    job.customer = req.body.customer;
+    job.vehicle = req.body.vehicle;
+    job.issue = req.body.issue;
+    job.work = req.body.work;
+    job.quote = req.body.quote;
     job.status = req.body.status;
+
     saveJobs(jobs);
 
-    res.json({ message: "Status updated", job });
+    res.json({ message: "Job updated", job });
 });
 
 // Delete job
@@ -129,8 +132,17 @@ app.delete("/jobs/:id", (req, res) => {
 });
 
 // =======================
+// FRONTEND ROUTE
+// =======================
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// =======================
 // START SERVER
 // =======================
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log("Server running on port " + PORT);
 });
