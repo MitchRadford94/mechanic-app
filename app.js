@@ -72,39 +72,41 @@ function loadJobs() {
     fetch(`${API_URL}/jobs`)
         .then(res => res.json())
         .then(data => {
-            jobs = data;
+            jobs = Array.isArray(data) ? data : [];
             displayJobs();
         })
         .catch(err => console.error("LOAD ERROR:", err));
 }
 
 // =======================
-// DISPLAY JOBS
+// DISPLAY JOBS (SAFE)
 // =======================
 function displayJobs() {
     jobList.innerHTML = "";
 
-    const search = searchInput.value.toLowerCase();
+    const search = (searchInput.value || "").toLowerCase();
 
     jobs
-        .filter(job =>
-            job.customer.toLowerCase().includes(search) ||
-            job.vehicle.toLowerCase().includes(search) ||
-            job.issue.toLowerCase().includes(search)
-        )
+        .filter(job => {
+            return (
+                (job.customer || "").toLowerCase().includes(search) ||
+                (job.vehicle || "").toLowerCase().includes(search) ||
+                (job.issue || "").toLowerCase().includes(search)
+            );
+        })
         .forEach(job => {
             const div = document.createElement("div");
             div.className = "job";
 
             div.innerHTML = `
-                <strong>${job.customer}</strong><br>
-                ${job.vehicle}<br>
-                ${job.issue}<br>
-                ${job.work}<br>
-                £${job.quote}<br>
+                <strong>${job.customer || ""}</strong><br>
+                ${job.vehicle || ""}<br>
+                ${job.issue || ""}<br>
+                ${job.work || ""}<br>
+                £${job.quote || ""}<br>
 
-                <span class="status-${job.status.replace(" ", "-")}">
-                    Status: ${job.status}
+                <span class="status-${(job.status || "new").replace(" ", "-")}">
+                    Status: ${job.status || "new"}
                 </span><br>
 
                 ${job.photo ? `<img src="${API_URL}/uploads/${job.photo}" width="200"><br>` : ""}
@@ -124,13 +126,14 @@ function displayJobs() {
 // =======================
 function editJob(id) {
     const job = jobs.find(j => j.id === id);
+    if (!job) return;
 
-    customer.value = job.customer;
-    vehicle.value = job.vehicle;
-    issue.value = job.issue;
-    work.value = job.work;
-    quote.value = job.quote;
-    status.value = job.status;
+    customer.value = job.customer || "";
+    vehicle.value = job.vehicle || "";
+    issue.value = job.issue || "";
+    work.value = job.work || "";
+    quote.value = job.quote || "";
+    status.value = job.status || "new";
 
     editingId = id;
 }
@@ -138,13 +141,13 @@ function editJob(id) {
 // =======================
 // UPDATE STATUS
 // =======================
-function updateStatus(id, status) {
+function updateStatus(id, statusValue) {
     fetch(`${API_URL}/jobs/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status: statusValue })
     })
     .then(res => res.json())
     .then(loadJobs)
