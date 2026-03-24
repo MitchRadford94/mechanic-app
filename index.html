@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mechanic Job App</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Prevent favicon error -->
+    <link rel="icon" href="data:,">
+</head>
+<body>
+
+    <h1>Mechanic Job Capture</h1>
+
+    <!-- JOB FORM -->
+    <form id="jobForm" enctype="multipart/form-data">
+        <input type="text" id="customer" placeholder="Customer Name" required>
+        <input type="text" id="vehicle" placeholder="Vehicle Details" required>
+
+        <textarea id="issue" placeholder="Issue Description"></textarea>
+        <textarea id="work" placeholder="Work Required"></textarea>
+
+        <input type="number" id="quote" placeholder="Quote (£)">
+
+        <select id="status">
+            <option value="new">New</option>
+            <option value="in progress">In Progress</option>
+            <option value="done">Done</option>
+        </select>
+
+        <!-- Photo upload -->
+        <input type="file" id="photo">
+
+        <button type="submit">Add Job</button>
+    </form>
+
+    <hr>
+
+    <!-- SEARCH (we’ll wire this next) -->
+    <input type="text" id="search" placeholder="Search jobs...">
+
+    <h2>Jobs</h2>
+    <div id="jobList"></div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+
+</body>
+</html>
