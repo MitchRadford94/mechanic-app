@@ -252,6 +252,7 @@ logoUpload.addEventListener("change", function () {
 // =======================
 // DARK MODE
 // =======================
+
 function toggleDarkMode() {
     document.body.classList.toggle("dark");
 
@@ -263,16 +264,24 @@ function toggleDarkMode() {
 
 function updateDarkIcon() {
     const btn = document.querySelector(".dark-toggle");
-    if (!btn) return;
+
+    if (!btn) {
+        console.log("Dark mode button not found");
+        return;
+    }
 
     const isDark = document.body.classList.contains("dark");
     btn.textContent = isDark ? "☀️" : "🌙";
 }
 
-// Load saved mode
-if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark");
-}
+// Run AFTER page loads
+window.addEventListener("DOMContentLoaded", () => {
 
-// Set icon on load
-updateDarkIcon();
+    // Load saved mode
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark");
+    }
+
+    // Set correct icon
+    updateDarkIcon();
+});
